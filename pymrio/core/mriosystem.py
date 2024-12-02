@@ -1420,8 +1420,33 @@ class Extension(BaseSystem):
             if (df in self.__dict__) and (getattr(self, df) is not None):
                 return getattr(self, df).index
         else:
-            logging.warn("No attributes available to get row names")
+            logging.warning("No attributes available to get row names")
             return None
+
+    def sanitize_row_names(self):
+        possible_dataframes = [
+            "F",
+            "F_Y",
+            "M",
+            "S",
+            "D_cba",
+            "D_pba",
+            "D_imp",
+            "D_exp",
+            "D_cba_reg",
+            "D_pba_reg",
+            "D_imp_reg",
+            "D_exp_reg",
+            "D_cba_cap",
+            "D_pba_cap",
+            "D_imp_cap",
+            "D_exp_cap",
+        ]
+        for df in possible_dataframes:
+            if (df in self.__dict__) and (getattr(self, df) is not None):
+                name = getattr(self, df).index
+                sanit_name, extra = name.split("|")
+                getattr(self, df).index = sanit_name
 
     def get_row_data(self, row, name=None):
         """Returns a dict with all available data for a row in the extension
